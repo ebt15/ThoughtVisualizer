@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# Project specific files
+# Ignore thought_process files with hexcodes
+thought_process_[a-f0-9]*.md
+
 # Distribution / packaging
 .Python
 build/

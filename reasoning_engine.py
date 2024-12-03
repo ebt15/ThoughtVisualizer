@@ -1,25 +1,17 @@
 import uuid
 import logging
 import re
-import sys
 from api_provider import api_provider
 from prompts import (
     system_prompt_first_turn,
-    system_prompt_intermediate_turn,
-    system_prompt_final_turn,
-    evaluator_system_prompt
+    system_prompt_intermediate_turn
 )
 from utils import (
     extract_reasoning_and_answer,
     check_reasoning_completion,
     generate_final_output,
-    write_to_readme,
-    get_thought_process_documentation
+    write_to_readme
 )
-
-# Configure logging
-logging.basicConfig(filename='model_logs.txt', level=logging.INFO, filemode='w',
-                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def iterative_reasoning(user_input, max_iterations, filename=None):
     iteration = 0

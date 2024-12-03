@@ -1,10 +1,24 @@
 import gradio as gr
-from reasoning_engine import run_iterative_reasoning, get_thought_process_documentation
+import logging
+from reasoning_engine import run_iterative_reasoning
+from utils import get_thought_process_documentation
+
+logging.basicConfig(
+    filename='app.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 # Define the model options
 MODEL_OPTIONS = ["claude-3-5-sonnet-20241022"]
 
 def chat_bot(user_input, chat_history, model_name, max_iterations, thought_process_files):
+    logging.info(f"Received user input: {user_input}")
+    logging.info(f"Current chat history length: {len(chat_history)}")
+    logging.info(f"Selected model: {model_name}")
+    logging.info(f"Max iterations: {max_iterations}")
+    
     # Construct the chat history as a string
     chat_history_text = ""
     for past_user_input, past_assistant_response in chat_history:
@@ -13,21 +27,42 @@ def chat_bot(user_input, chat_history, model_name, max_iterations, thought_proce
     full_user_input = chat_history_text + f"User: {user_input}"
 
     # Run the main logic and get the filename
-    response, filename = run_iterative_reasoning(full_user_input, model_name, max_iterations)
+    try:
+        response, filename = run_iterative_reasoning(full_user_input, model_name, max_iterations)
+        logging.info(f"Generated response: {response}")
+        logging.info(f"Thought process documentation saved to: {filename}")
+    except Exception as e:
+        logging.error(f"Error in run_iterative_reasoning: {e}")
+        response = "An error occurred while processing your request."
+        filename = None
+
     # Append the filename to the list of thought process files
-    thought_process_files.append(filename)
+    if filename:
+        thought_process_files.append(filename)
+    else:
+        logging.warning("No filename returned; thought process file not appended.")
+
     # Update the chat history in-place
     chat_history.append((user_input, response))
+
     # Retrieve the latest thought process documentation
-    thought_process = get_thought_process_documentation(filename)
+    try:
+        thought_process = get_thought_process_documentation(filename)
+        logging.info("Successfully retrieved thought process documentation.")
+    except Exception as e:
+        logging.error(f"Error in get_thought_process_documentation: {e}")
+        thought_process = "An error occurred while retrieving the thought process documentation."
+
     return chat_history, "", thought_process, thought_process_files
 
 def download_documentation(thought_process_files):
     # Provide the latest thought process file for download
     if thought_process_files:
         latest_file = thought_process_files[-1]
+        logging.info(f"Providing file for download: {latest_file}")
         return gr.update(visible=True, value=latest_file)
     else:
+        logging.info("No thought process files available for download.")
         return gr.update(visible=False)
 
 def main():
@@ -70,6 +105,7 @@ def main():
         thought_process_files = gr.State([])
 
         def on_send(user_message, chat_history, model_name, max_iterations, thought_process_files):
+            logging.info("Send button clicked.")
             chat_history, _, thought_process, thought_process_files = chat_bot(
                 user_message, chat_history, model_name, max_iterations, thought_process_files
             )

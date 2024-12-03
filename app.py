@@ -123,7 +123,7 @@ def main():
             outputs=download_file
         )
 
-    demo.launch()
+    demo.launch(server_name="0.0.0.0")
 
 if __name__ == "__main__":
     main()

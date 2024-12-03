@@ -9,6 +9,7 @@ __pycache__/
 # Project specific files
 # Ignore thought_process files with hexcodes
 thought_process_[a-f0-9]*.md
+model_logs.txt
 
 # Distribution / packaging
 .Python

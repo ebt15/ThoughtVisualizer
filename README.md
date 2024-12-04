@@ -17,7 +17,7 @@ A failed experiment that tried to improve LLM reasoning. Wanted to enhance Claud
 
 To improve LLM reasoning, the evidence suggests:
 1. Models need direct training on reasoning examples
-2. Training should include explicit <reasoning>...</reasoning> tags
+2. Training should include explicit `<reasoning>`...`</reasoning>` tags
 3. Real human reasoning patterns are necessary, not just prompt engineering
 
 ## Installation

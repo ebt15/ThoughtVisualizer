@@ -44,7 +44,7 @@ def iterative_reasoning(user_input, max_iterations, filename=None):
                 "content": [
                     {
                         "type": "text",
-                        "text": input_context
+                        "text": input_context + "Enclose your reasoning process within <reasoning>...</reasoning> tags."
                     }
                 ]
             }
